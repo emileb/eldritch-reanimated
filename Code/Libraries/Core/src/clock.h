@@ -11,6 +11,8 @@
 #define CLOCK_T	__int64
 #elif BUILD_SDL
 #define CLOCK_T	Uint64
+#elif __SWITCH__
+#define CLOCK_T	unsigned long long int
 #endif
 
 // Returns the total running time, current time, or delta time

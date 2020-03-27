@@ -114,13 +114,14 @@ void GL2Renderer::Initialize()
 		ASSERT( Error == 0 );
 #endif
 	}
-
+#ifdef __SWITCH__
+	gladLoadGL();
+#else
 	{
 		const GLenum Error		= glewInit();
 		Unused( Error );
 		ASSERT( Error == GLEW_OK );
 	}
-
 	// TODO: Move to a "test capabilities" kind of function
 	{
 		ASSERT( GLEW_VERSION_2_1 );
@@ -133,7 +134,7 @@ void GL2Renderer::Initialize()
 		ASSERT( WGLEW_EXT_swap_control );
 #endif
 	}
-
+#endif
 	glFrontFace( GL_CCW );
 	GLint MaxVertexAttribs;
 	glGetIntegerv( GL_MAX_VERTEX_ATTRIBS, &MaxVertexAttribs );

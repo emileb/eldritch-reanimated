@@ -20,7 +20,7 @@
 #endif
 
 #define BUILD_STEAM				0
-#define BUILD_SDL				( 0 || BUILD_MAC || BUILD_LINUX )
+#define BUILD_SDL				( 0 || BUILD_MAC || BUILD_LINUX || __SWITCH__ )
 #define BUILD_WINDOWS_NO_SDL	( BUILD_WINDOWS && ( !BUILD_SDL ) )
 
 #define REPORT_BUILD 0

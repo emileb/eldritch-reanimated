@@ -1,9 +1,43 @@
 #ifndef GL2_H
 #define GL2_H
 
+#ifndef __SWITCH__
 #include "GL/glew.h"
 #ifdef WIN32
 #include "GL/wglew.h"
+#endif
+#else
+#include <glad/glad.h>  // glad library (OpenGL loader)
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT  0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT  0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT  0x83F3
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#define GL_RGBA16F_ARB                    0x881A
+#define GL_RGBA32F_ARB                    0x8814
+#define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
+#define GL_COLOR_ATTACHMENT1_EXT GL_COLOR_ATTACHMENT1
+#define GL_COLOR_ATTACHMENT2_EXT GL_COLOR_ATTACHMENT2
+#define GL_COLOR_ATTACHMENT3_EXT GL_COLOR_ATTACHMENT3
+#define GLEW_ARB_framebuffer_object 1
+#define GLEW_EXT_framebuffer_object 0
+#define GLEW_ARB_texture_float 1
+#define GLEW_ARB_texture_rg 1
+#define GLEW_EXT_texture_compression_s3tc 1
+#define glDeleteRenderbuffersEXT
+#define glDeleteFramebuffersEXT
+#define glGenRenderbuffersEXT
+#define GL_RENDERBUFFER_EXT
+#define GL_FRAMEBUFFER_EXT
+#define glBindRenderbufferEXT(...)
+#define glRenderbufferStorageEXT(...)
+#define glGenFramebuffersEXT
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X_EXT
+#define glBindFramebufferEXT(...)
+#define glFramebufferRenderbufferEXT(...)
+#define glCheckFramebufferStatusEXT(...) 1
+#define GL_FRAMEBUFFER_COMPLETE_EXT GL_FRAMEBUFFER_COMPLETE
+#define glFramebufferTexture2DEXT(...)
 #endif
 
 #if BUILD_DEV

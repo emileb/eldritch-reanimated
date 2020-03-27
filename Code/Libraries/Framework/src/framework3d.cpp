@@ -221,9 +221,12 @@ void Framework3D::Main()
 	GetInitialWindowIcon( WindowIcon );
 	GetInitialWindowSize( WindowWidth, WindowHeight );
 	GetInitialWindowTitle( WindowTitle );
-
+#ifndef __SWITCH__
 	CreateSplashWindow( WindowIcon, WindowTitle.CStr() );
-
+#else
+	WindowWidth = 1280;
+	WindowHeight = 720;
+#endif
 	m_Window = new Window;
 
 #if BUILD_WINDOWS_NO_SDL
@@ -248,6 +251,9 @@ void Framework3D::Main()
 	{
 		WindowFlags |= SDL_WINDOW_BORDERLESS;
 	}
+#ifdef __SWITCH__
+	WindowFlags = 0;
+#endif
 	// TODO SDL: Unify interface?
 	m_Window->Init( WindowTitle.CStr(), WindowFlags, WindowWidth, WindowHeight );
 

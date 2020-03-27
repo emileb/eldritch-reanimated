@@ -117,7 +117,11 @@ int Window::Init( const char* Title, uint Flags, int Width, int Height )
 	{
 		return 1;
 	}
-
+#if __SWITCH__
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+#endif
 	m_Window = SDL_CreateWindow( Title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Width, Height, Flags );
 	ASSERT( m_Window );
 
