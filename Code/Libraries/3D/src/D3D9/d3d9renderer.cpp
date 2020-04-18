@@ -28,10 +28,12 @@
 #include "simplestring.h"
 #include "consolemanager.h"
 #include "mathcore.h"
-
+#ifdef USE_DXVK
+#include "windowwrapper.h"
+#endif
 #include <d3d9.h>
 
-#if BUILD_DEV || !BUILD_STEAM
+#if (BUILD_DEV || !BUILD_STEAM) && !USE_DXVK
 #include <d3dx9.h>	// Included only for saving screenshots now!
 #endif
 
@@ -54,13 +56,20 @@ D3DMULTISAMPLE_TYPE GetD3DMultiSampleType( EMultiSampleType MultiSampleType )
 		return D3DMULTISAMPLE_NONE;
 	}
 }
-
-D3D9Renderer::D3D9Renderer( HWND hWnd, Display* const pDisplay )
+#ifdef USE_DXVK
+D3D9Renderer::D3D9Renderer( Window* const pWindow, Display* const pDisplay )
+#else
+D3D9Renderer::D3D9Renderer( HWND hWnd, Display* const pDisplay );
+#endif
 :	m_D3D( NULL )
 ,	m_D3DDevice( NULL )
 ,	m_DeviceLost( false )
 ,	m_RestoreDeviceCallback()
+#ifdef USE_DXVK
+,	m_Window( pWindow )
+#else
 ,	m_hWnd( hWnd )
+#endif
 ,	m_MultiSampleType( EMST_None )
 ,	m_MaxAnisotropy( 0 )
 {
@@ -96,11 +105,23 @@ void D3D9Renderer::Initialize()
 	CATPRINTF( sRender, 1, "Creating Direct3D device...\n" );
 
 	HRESULT Result = 0;
-	Result = m_D3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd, D3DCREATE_FPU_PRESERVE | D3DCREATE_HARDWARE_VERTEXPROCESSING, &D3DParams, &m_D3DDevice );
+	Result = m_D3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+#ifdef USE_DXVK
+		m_Window->GetSDLWindow(),
+#else
+		m_hWnd,
+#endif
+		D3DCREATE_FPU_PRESERVE | D3DCREATE_HARDWARE_VERTEXPROCESSING, &D3DParams, &m_D3DDevice );
 	if( Result != D3D_OK )
 	{
 		CATPRINTF( sRender, 1, "CreateDevice returned 0x%08X, trying again with software processing\n", Result );
-		Result = m_D3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWnd, D3DCREATE_FPU_PRESERVE | D3DCREATE_SOFTWARE_VERTEXPROCESSING, &D3DParams, &m_D3DDevice );
+		Result = m_D3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+#ifdef USE_DXVK
+			m_Window->GetSDLWindow(),
+#else
+			m_hWnd,
+#endif
+			D3DCREATE_FPU_PRESERVE | D3DCREATE_SOFTWARE_VERTEXPROCESSING, &D3DParams, &m_D3DDevice );
 	}
 	CATPRINTF( sRender, 1, "CreateDevice returned 0x%08X\n", Result );
 	ASSERT( Result == D3D_OK );
@@ -600,7 +621,7 @@ void D3D9Renderer::GetPresentParams( D3DPRESENT_PARAMETERS& Params )
 	D3DDISPLAYMODE D3DDisplayMode;
 	m_D3D->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &D3DDisplayMode );	// NOTE: This assumes the desired resolution is set before calling this for fullscreen mode
 
-	ZeroMemory( &Params, sizeof( D3DPRESENT_PARAMETERS ) );
+	memset(&Params, 0, sizeof( D3DPRESENT_PARAMETERS ));
 
 	if( m_Display->m_Fullscreen )
 	{
@@ -640,9 +661,11 @@ void D3D9Renderer::GetPresentParams( D3DPRESENT_PARAMETERS& Params )
 	}
 
 	Params.SwapEffect = D3DSWAPEFFECT_DISCARD;		// Is apparently fastest (and allows multisampling)
-
+#ifdef USE_DXVK
+	Params.hDeviceWindow = m_Window->GetSDLWindow();
+#else
 	Params.hDeviceWindow = m_hWnd;
-
+#endif
 	Params.EnableAutoDepthStencil = true;
 	Params.AutoDepthStencilFormat = ( D3DDisplayMode.Format == D3DFMT_X8R8G8B8 ) ? D3DFMT_D24S8 : D3DFMT_D16;
 
@@ -692,7 +715,7 @@ void* D3D9Renderer::GetDevice()
 
 /*virtual*/ void D3D9Renderer::SaveScreenshot( const SimpleString& Filename )
 {
-#if !BUILD_DEV && BUILD_STEAM
+#if (!BUILD_DEV && BUILD_STEAM) || USE_DXVK
 	Unused( Filename );
 #else
 	ASSERT( m_CurrentRenderTarget );

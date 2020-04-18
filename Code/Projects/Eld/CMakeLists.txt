@@ -357,4 +357,10 @@ src/uiinputmapeld.h
  
 add_executable(Eldritch ${eldritch_src})
 
-target_link_libraries(Eldritch Core Math 3D Audio SoLoud Workbench Rodin UI Framework SDL2 GL GLEW)
+target_link_libraries(Eldritch Core Math 3D Audio SoLoud Workbench Rodin UI Framework SDL2)
+
+if (USE_DXVK)
+	target_link_libraries(Eldritch dxvk_d3d9)
+else()
+	target_link_libraries(Eldritch GL GLEW)
+endif()

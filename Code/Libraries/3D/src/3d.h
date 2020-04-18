@@ -52,8 +52,17 @@ struct SRect
 // to avoid linking a main project into D3D
 
 #if BUILD_WINDOWS_NO_SDL
-#include <Windows.h>
-class IRenderer* CreateD3D9Renderer( HWND hWnd, class Display* const pDisplay );
+#include <windows.h>
+#endif
+
+#if BUILD_WINDOWS_NO_SDL || USE_DXVK
+class IRenderer* CreateD3D9Renderer(
+#ifdef USE_DXVK
+	class Window* const pWindow,
+#else
+	HWND hWnd,
+#endif
+	class Display* const pDisplay );
 #endif
 
 class IRenderer* CreateGL2Renderer( class Window* const pWindow, class Display* const pDisplay );

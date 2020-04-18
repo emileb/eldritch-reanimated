@@ -10,29 +10,6 @@ link_directories(${CMAKE_SOURCE_DIR}/Libraries/Math/)
 set(3d_src
 src/3d.cpp
 src/3d.h
-src/GL2/gl2.h
-src/GL2/gl2cubemap.cpp
-src/GL2/gl2cubemap.h
-src/GL2/gl2cuberendertarget.cpp
-src/GL2/gl2cuberendertarget.h
-src/GL2/gl2indexbuffer.cpp
-src/GL2/gl2indexbuffer.h
-src/GL2/gl2pixelshader.cpp
-src/GL2/gl2pixelshader.h
-src/GL2/gl2renderer.cpp
-src/GL2/gl2renderer.h
-src/GL2/gl2rendertarget.cpp
-src/GL2/gl2rendertarget.h
-src/GL2/gl2shaderprogram.cpp
-src/GL2/gl2shaderprogram.h
-src/GL2/gl2texture.cpp
-src/GL2/gl2texture.h
-src/GL2/gl2vertexbuffer.cpp
-src/GL2/gl2vertexbuffer.h
-src/GL2/gl2vertexdeclaration.cpp
-src/GL2/gl2vertexdeclaration.h
-src/GL2/gl2vertexshader.cpp
-src/GL2/gl2vertexshader.h
 src/SDPs/sdpbase.cpp
 src/SDPs/sdpbase.h
 src/animation.cpp
@@ -99,7 +76,55 @@ src/vertexdeclarationmanager.h
 src/view.cpp
 src/view.h
 )
- 
+
+if (USE_DXVK)
+	#FIXME: Don't hardcode this.
+	include_directories(/home/rohit/Code/mingw-w64/mingw-w64-headers/include/)
+	set(CMAKE_CXX_FLAGS "-DUSE_DXVK")
+	set (3d_src ${3d_src}
+	src/D3D9/d3d9constanttable.cpp
+	src/D3D9/d3d9cubemap.cpp
+	src/D3D9/d3d9cuberendertarget.cpp
+	src/D3D9/d3d9indexbuffer.cpp
+	src/D3D9/d3d9pixelshader.cpp
+	src/D3D9/d3d9renderer.cpp
+	src/D3D9/d3d9rendertarget.cpp
+	src/D3D9/d3d9shaderprogram.cpp
+	src/D3D9/d3d9texture.cpp
+	src/D3D9/d3d9vertexbuffer.cpp
+	src/D3D9/d3d9vertexdeclaration.cpp
+	src/D3D9/d3d9vertexshader.cpp
+	)
+
+else()
+	set (3d_src ${3d_src}
+	src/GL2/gl2.h
+	src/GL2/gl2cubemap.cpp
+	src/GL2/gl2cubemap.h
+	src/GL2/gl2cuberendertarget.cpp
+	src/GL2/gl2cuberendertarget.h
+	src/GL2/gl2indexbuffer.cpp
+	src/GL2/gl2indexbuffer.h
+	src/GL2/gl2pixelshader.cpp
+	src/GL2/gl2pixelshader.h
+	src/GL2/gl2renderer.cpp
+	src/GL2/gl2renderer.h
+	src/GL2/gl2rendertarget.cpp
+	src/GL2/gl2rendertarget.h
+	src/GL2/gl2shaderprogram.cpp
+	src/GL2/gl2shaderprogram.h
+	src/GL2/gl2texture.cpp
+	src/GL2/gl2texture.h
+	src/GL2/gl2vertexbuffer.cpp
+	src/GL2/gl2vertexbuffer.h
+	src/GL2/gl2vertexdeclaration.cpp
+	src/GL2/gl2vertexdeclaration.h
+	src/GL2/gl2vertexshader.cpp
+	src/GL2/gl2vertexshader.h
+	)
+endif()
+
+
 add_library(3D ${3d_src})
 
 target_link_libraries(3D Core Math GL)

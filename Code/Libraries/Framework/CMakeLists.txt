@@ -20,6 +20,10 @@ src/uimanagerframework.cpp
 src/uimanagerframework.h
 )
 
+if (USE_DXVK)
+	set(CMAKE_CXX_FLAGS "-DUSE_DXVK")
+endif()
+
 add_library(Framework ${framework_src})
 
 target_link_libraries(Framework 3D)

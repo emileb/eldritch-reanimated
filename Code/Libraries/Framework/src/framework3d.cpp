@@ -244,13 +244,20 @@ void Framework3D::Main()
 
 	m_Window->Init( WindowTitle.CStr(), "Class1", WindowStyle, 0, WindowWidth, WindowHeight, m_hInstance, WindowProc, WindowIcon, m_Display->m_ScreenWidth, m_Display->m_ScreenHeight );
 #elif BUILD_SDL
-	uint WindowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN;
+	uint WindowFlags = SDL_WINDOW_HIDDEN;
 	if( m_Display->m_Fullscreen ||
 		(	m_Display->m_ScreenWidth == m_Display->m_Width &&
 			m_Display->m_ScreenHeight == m_Display->m_Height ) )
 	{
 		WindowFlags |= SDL_WINDOW_BORDERLESS;
 	}
+
+#ifdef USE_DXVK
+	WindowFlags |= SDL_WINDOW_VULKAN;
+#else
+	WindowFlags |= SDL_WINDOW_OPENGL;
+#endif
+
 #ifdef __SWITCH__
 	WindowFlags = 0;
 #endif
@@ -288,6 +295,10 @@ void Framework3D::Main()
 	XTRACE_END;
 
 	XTRACE_BEGIN( InitializeRenderer );
+#ifdef USE_DXVK
+	PRINTF( "Using Direct3D renderer.\n" );
+	m_Renderer = CreateD3D9Renderer( m_Window, m_Display );
+#else
 #if BUILD_WINDOWS_NO_SDL
 		STATICHASH( OpenGL );
 		const bool OpenGL = ConfigManager::GetBool( sOpenGL );
@@ -304,7 +315,7 @@ void Framework3D::Main()
 			m_Renderer = CreateD3D9Renderer( m_Window->GetHWnd(), m_Display );
 		}
 #endif
-
+#endif
 		IRenderer::SRestoreDeviceCallback Callback;
 		Callback.m_Callback = &Framework3D::RendererRestoreDeviceCallback;
 		Callback.m_Void = this;

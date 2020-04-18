@@ -5,7 +5,17 @@
 #include "mathcore.h"
 
 #include <d3d9.h>
+#ifndef USE_DXVK
 #include <ddraw.h>	// For DDSURFACEDESC2
+#else
+#define DDSD_MIPMAPCOUNT	0x00020000
+#define DDSD_HEIGHT			0x00000002
+#define DDSD_CAPS			0x00000001
+#define DDSCAPS_TEXTURE		0x00001000
+#define DDPF_FOURCC			0x00000004
+#define DDSD_WIDTH			0x00000004
+#define DDSD_PIXELFORMAT	0x00001000
+#endif
 
 D3D9Texture::D3D9Texture( IDirect3DDevice9* D3DDevice )
 :	m_Texture( NULL )

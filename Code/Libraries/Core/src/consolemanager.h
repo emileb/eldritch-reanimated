@@ -9,9 +9,9 @@
 #include "array.h"
 #include "simplestring.h"
 #include "keyboard.h"
-
+#ifndef USE_DXVK
 #include <Windows.h>
-
+#endif
 class ConsoleManager
 {
 public:

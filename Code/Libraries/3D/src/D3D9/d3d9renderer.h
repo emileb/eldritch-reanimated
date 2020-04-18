@@ -6,7 +6,7 @@
 
 #include "renderercommon.h"
 
-#include <Windows.h>
+#include <windows.h>
 #include <d3d9.h>
 
 class ShaderManager;
@@ -14,13 +14,18 @@ class TextureManager;
 class FontManager;
 class MeshFactory;
 class D3D9Shader;
-
+#ifdef USE_DXVK
+class Window;
+#endif
 class D3D9Renderer : public RendererCommon
 {
 public:
 	virtual ~D3D9Renderer();
+#ifdef USE_DXVK
+	D3D9Renderer( Window* const pWindow, Display* const pDisplay );
+#else
 	D3D9Renderer( HWND hWnd, Display* const pDisplay );
-
+#endif
 	virtual void	Initialize();
 	virtual void	Tick();
 	virtual void	Clear( const uint Flags, const uint Color = 0xff000000, const float Depth = 1.0f, const uint Stencil = 0 );
@@ -124,8 +129,11 @@ protected:
 
 	bool					m_DeviceLost;
 	SRestoreDeviceCallback	m_RestoreDeviceCallback;
-
-	HWND				m_hWnd;
+#ifdef USE_DXVK
+	Window*					m_Window;
+#else
+	HWND					m_hWnd;
+#endif
 	EMultiSampleType	m_MultiSampleType;
 
 	DWORD				m_MaxAnisotropy;
