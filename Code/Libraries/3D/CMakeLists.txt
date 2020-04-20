@@ -127,4 +127,4 @@ endif()
 
 add_library(3D ${3d_src})
 
-target_link_libraries(3D Core Math GL)
+target_link_libraries(3D Core Math)
